@@ -34,3 +34,19 @@ def users_new_form():
     """Shows a form to create a new user"""
 
     return render_template('users/new.html')
+
+
+@app.route('/users/new', methods=["POST"])
+def users_new():
+    """Handles the form submission"""
+
+    new_user = User(
+        first_name=request.form['first_name'],
+        last_name=request.form['last_name'],
+        image_url=request.form['image_url'] or None
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect('/users')
