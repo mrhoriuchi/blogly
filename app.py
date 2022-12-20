@@ -25,3 +25,10 @@ def users_index():
 
     users = User.query.order_by(User.last_name, User.first_name).all()
     return render_template('users/index.html', users=users)
+
+
+@app.route('/users/new', methods=["GET"])
+def users_new_form():
+    """Shows a form to create a new user"""
+
+    return render_template('users/new.html')
