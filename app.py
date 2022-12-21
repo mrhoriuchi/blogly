@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User
+from models import db, connect_db, User, Post
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -19,6 +19,9 @@ def homepage():
     """Redirects to list of users"""
 
     return redirect('/users')
+
+#######################################################
+# User Routes
 
 
 @app.route('/users')
@@ -93,3 +96,14 @@ def users_delete(user_id):
     db.session.commit()
 
     return redirect("/users")
+
+#######################################################
+# Post Routes
+
+
+@app.route()
+def posts_new_form(user_id):
+    """Shows a form to create a new post"""
+
+    user = User.query.get_or_404(user_id)
+    return render_template('posts/new.html', user=user)
