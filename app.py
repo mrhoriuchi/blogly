@@ -21,6 +21,13 @@ def homepage():
     posts = Post.query.order_by(Post.created_at.desc()).limit(8).all()
     return render_template("posts/homepage.html", posts=posts)
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """Shows 404 not found"""
+
+    return render_template('404.html'), 404
+
 #######################################################
 # User Routes
 
@@ -53,6 +60,8 @@ def users_new():
     db.session.add(new_user)
     db.session.commit()
 
+    flash(f"User {user.full_name} has been created.")
+
     return redirect('/users')
 
 
@@ -72,7 +81,7 @@ def users_edit(user_id):
     render_template('users/edit.html', user=user)
 
 
-@app.route('/users/<int:user_id>/edit')
+@app.route('/users/<int:user_id>/edit', methods=["POST"])
 def users_update(user_id):
     """Handles form submission for user edit"""
 
@@ -84,10 +93,12 @@ def users_update(user_id):
     db.session.add(user)
     db.session.commit()
 
+    flash(f"User {user.full_name} has been updated.")
+
     return redirect("/users")
 
 
-@app.route('/users/<int:user_id>/edit')
+@app.route('/users/<int:user_id>/edit', methods=["POST"])
 def users_delete(user_id):
     """Handles form submission for user delete"""
 
@@ -95,6 +106,8 @@ def users_delete(user_id):
 
     db.session.delete(user)
     db.session.commit()
+
+    flash(f"User {user.full_name} has been deleted.")
 
     return redirect("/users")
 
