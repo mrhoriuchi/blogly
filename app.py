@@ -10,6 +10,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = 'bloglysecret'
 
+toolbar = DebugToolbarExtension(app)
+
 connect_db(app)
 db.create_all()
 
@@ -18,7 +20,7 @@ db.create_all()
 def homepage():
     """Redirects to list of users"""
 
-    return redirect()
+    return redirect('/users')
 
 
 @app.route('/users')
