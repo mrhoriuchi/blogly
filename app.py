@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Post
 
@@ -18,7 +18,8 @@ db.create_all()
 def homepage():
     """Redirects to list of users"""
 
-    return redirect('/users')
+    posts = Post.query.order_by(Post.created_at.desc()).limit(8).all()
+    return render_template("posts/homepage.html", posts=posts)
 
 #######################################################
 # User Routes
@@ -101,9 +102,23 @@ def users_delete(user_id):
 # Post Routes
 
 
-@app.route()
+@app.route('/users/<int:user_id>/posts/new')
 def posts_new_form(user_id):
-    """Shows a form to create a new post"""
+    """Shows a form to create a new post for a specific user"""
 
     user = User.query.get_or_404(user_id)
     return render_template('posts/new.html', user=user)
+
+
+@app.route('/users/<int:user_id>/posts/new', methods=["POST"])
+def posts_new(user_id):
+    """Handles form submission of post"""
+
+    user = User.query.get_or_404(user_id)
+    new_post = Post(title=request.form['title'],
+                    content=request.form['content'], user=user)
+    db.session.add(new_post)
+    db.session.commit()
+    flash(f"Post '{new_post.title}' added.")
+
+    return redirect(f"/users/{user_id}")
